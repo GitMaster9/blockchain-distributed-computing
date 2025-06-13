@@ -2,83 +2,84 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 
-def run_simulation(num_photons = 1_000_000, slab_thickness = 10.0, attenuation_coeff = 0.1, use_scatter = False, p_scatter = 0.7, p_scatter_reverses_direction = 0.5, seed = 1):
-    """
-    Runs a Monte Carlo 1D radiation transport simulation.
+class Simulation:
+    def __init__(self, num_photons = 100_000, slab_thickness = 10.0, attenuation_coeff = 0.1, use_scatter = False, p_scatter = 0.7, p_scatter_reverses_direction = 0.5, seed = 1):
+        """
+        Class that defines a Monte Carlo simulation of 1D photon radiation transport.
 
-    slab thickness [cm]
-    
-    linear attenuation coefficient (mu) [1/cm]
-    """
+        slab thickness [cm]
+        
+        linear attenuation coefficient (mu) [1/cm]
+        """
+        self.num_photons = num_photons
+        self.slab_thickness = slab_thickness
+        self.attenuation_coeff = attenuation_coeff
+        self.use_scatter = use_scatter
+        self.p_scatter = p_scatter
+        self.p_scatter_reverses_direction = p_scatter_reverses_direction
+        self.seed = seed
 
-    np.random.seed(seed)
+        self.absorbed_positions = []
+        self.absorbed_count = 0
+        self.absorbed_fraction = 0.0
+        
+        self.escaped_count = 0
+        self.escaped_fraction = 0
+        
+        self.time_needed = 0.0
 
-    absorbed_positions = []
-    escaped_count = 0
+    def run_simulation(self, print_debug = False):
+        np.random.seed(self.seed)
 
-    print("Simulation parameters:")
-    print(f"num_photons={num_photons}")
-    print(f"slab_thickness={slab_thickness}")
-    print(f"attenuation_coeff={attenuation_coeff}")
-    print(f"use_scatter={use_scatter}")
-    print(f"p_scatter={p_scatter}")
-    print(f"p_scatter_reverses_direction={p_scatter_reverses_direction}")
-    print(f"seed={seed}")
+        absorbed_positions = []
+        escaped_count = 0
 
-    start_time = time.perf_counter()
+        if (print_debug):
+            print("Simulation parameters:")
+            print(f"num_photons={self.num_photons}")
+            print(f"slab_thickness={self.slab_thickness}")
+            print(f"attenuation_coeff={self.attenuation_coeff}")
+            print(f"use_scatter={self.use_scatter}")
+            print(f"p_scatter={self.p_scatter}")
+            print(f"p_scatter_reverses_direction={self.p_scatter_reverses_direction}")
+            print(f"seed={self.seed}")
 
-    for _ in range(num_photons):
-        x = 0.0  # Photon starts at surface
-        direction = 1  # +1 = forward, -1 = backward
+        start_time = time.perf_counter()
 
-        while True:
-            # Sample a step from exponential distribution
-            step = np.random.exponential(1 / attenuation_coeff)
-            x += direction * step
+        for _ in range(self.num_photons):
+            x = 0.0  # Photon starts at surface
+            direction = 1  # +1 = forward, -1 = backward
 
-            # Check if photon escapes
-            if x < 0 or x > slab_thickness:
-                escaped_count += 1
-                break
+            while True:
+                # Sample a step from exponential distribution
+                step = np.random.exponential(1 / self.attenuation_coeff)
+                x += direction * step
 
-            # Decide interaction outcome: scatter or absorb
-            if use_scatter and np.random.rand() < p_scatter:
-                # Scatter: reverse direction randomly
-                direction = 1 if np.random.rand() < p_scatter_reverses_direction else -1
-            else:
-                # Absorbed at current location
-                absorbed_positions.append(x)
-                break
+                # Check if photon escapes
+                if x < 0 or x > self.slab_thickness:
+                    escaped_count += 1
+                    break
 
-    end_time = time.perf_counter()
+                # Decide interaction outcome: scatter or absorb
+                if self.use_scatter and np.random.rand() < self.p_scatter:
+                    # Scatter: reverse direction randomly
+                    direction = 1 if np.random.rand() < self.p_scatter_reverses_direction else -1
+                else:
+                    # Absorbed at current location
+                    absorbed_positions.append(x)
+                    break
 
-    time_needed = round(end_time - start_time, 2)
+        end_time = time.perf_counter()
 
-    print(f"Time needed: {time_needed} s")
-    
-    return absorbed_positions, time_needed
+        self.absorbed_positions = absorbed_positions
+        self.escaped_count = escaped_count
+        self.time_needed = round(end_time - start_time, 2)
 
-def get_simulation_statistics(num_photons: int, absorbed_positions: list):
-    absorbed_count = len(absorbed_positions)
-    escaped_count = num_photons - absorbed_count
-    
-    absorbed_fraction = absorbed_count / num_photons
-    escaped_fraction = escaped_count / num_photons
+        if (print_debug):
+            print(f"Time needed: {self.time_needed} s")
 
-    return absorbed_count, escaped_count, absorbed_fraction, escaped_fraction
-
-num_photons = 1_000_000
-absorbed_positions, time_needed = run_simulation(num_photons=num_photons)
-
-absorbed_count, escaped_count, absorbed_fraction, escaped_fraction = get_simulation_statistics(num_photons, absorbed_positions)
-
-print(f"Escaped photons: {escaped_count} ({escaped_fraction:.2%})")
-print(f"Absorbed photons: {absorbed_count} ({absorbed_fraction:.2%})")
-
-# Plot absorption depth histogram
-plt.hist(absorbed_positions, bins=50, density=True, alpha=0.7, color='steelblue')
-plt.title("1D Radiation Transport with Scattering")
-plt.xlabel("Depth (cm)")
-plt.ylabel("Absorption Probability Density")
-plt.grid(True)
-plt.show()
+        self.absorbed_count = len(self.absorbed_positions)
+        self.escaped_count = self.num_photons - self.absorbed_count
+        
+        self.absorbed_fraction = self.absorbed_count / self.num_photons
+        self.escaped_fraction = escaped_count / self.num_photons
