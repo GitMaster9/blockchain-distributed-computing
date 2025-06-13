@@ -1,0 +1,328 @@
+services:
+  blockchain-adapter:
+    container_name: blockchain-adapter
+    depends_on:
+    - blockchain-adapter-mongo
+    environment:
+    - IEXEC_BLOCKCHAIN_ADAPTER_API_NODE_ADDRESS=$CHAIN_URL
+    - IEXEC_BLOCKCHAIN_ADAPTER_API_CHAIN_ID=$CHAIN_ID
+    - IEXEC_BLOCKCHAIN_ADAPTER_API_IS_SIDECHAIN=$CHAIN_IS_SIDECHAIN
+    - IEXEC_BLOCKCHAIN_ADAPTER_API_HUB_ADDRESS=$CHAIN_HUB_ADDRESS
+    - IEXEC_BLOCKCHAIN_ADAPTER_API_BLOCK_TIME=$CHAIN_BLOCK_TIME
+    - IEXEC_BLOCKCHAIN_ADAPTER_API_WALLET_PATH=/wallet.json
+    - IEXEC_BLOCKCHAIN_ADAPTER_API_WALLET_PASSWORD=$PROD_CORE_WALLET_PASSWORD
+    - IEXEC_BLOCKCHAIN_ADAPTER_API_MONGO_HOST=blockchain-adapter-mongo
+    - IEXEC_BLOCKCHAIN_ADAPTER_API_PASSWORD=$PROD_CHAIN_ADAPTER_PASSWORD
+    - IEXEC_BLOCKCHAIN_ADAPTER_API_GAS_PRICE_MULTIPLIER=$GAS_PRICE_MULTIPLIER
+    - IEXEC_BLOCKCHAIN_ADAPTER_API_GAS_PRICE_CAP=$GAS_PRICE_CAP
+    - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,prometheus
+    - VIRTUAL_HOST=${PROD_CHAIN_ADAPTER_HOST}
+    - LETSENCRYPT_HOST=${PROD_CHAIN_ADAPTER_HOST}
+    - VIRTUAL_PORT=13010
+    healthcheck:
+      test: curl --fail http://localhost:13010/actuator/health || exit 1
+    image: iexechub/iexec-blockchain-adapter-api:8.3.0
+    restart: unless-stopped
+    volumes:
+    - ./core_wallet.json:/wallet.json
+    networks:
+      - iexec_network
+    ports:
+      - 13010:13010
+  
+  blockchain-adapter-mongo:
+    container_name: blockchain-adapter-mongo
+    command: -c "mongod --bind_ip_all --port 13012"
+    entrypoint: /bin/bash
+    image: library/mongo:4.4
+    restart: unless-stopped
+    networks:
+      - iexec_network
+  
+  blockchain-adapter-mongo-ui:
+    container_name: blockchain-adapter-mongo-ui
+    depends_on:
+    - blockchain-adapter-mongo
+    environment:
+    - ME_CONFIG_BASICAUTH_USERNAME=admin
+    - ME_CONFIG_BASICAUTH_PASSWORD=$PROD_MONGO_PASSWORD
+    - ME_CONFIG_MONGODB_PORT=13012
+    - ME_CONFIG_MONGODB_SERVER=blockchain-adapter-mongo
+    - VCAP_APP_PORT=13013
+    image: library/mongo-express:0.54
+    ports:
+    - 13013:13013
+    restart: unless-stopped
+    networks:
+      - iexec_network
+  
+  core:
+    container_name: core
+    depends_on:
+    - mongo
+    - blockchain-adapter
+    environment:
+    - IEXEC_CORE_WALLET_PATH=/iexec-wallet/encrypted-wallet.json
+    - IEXEC_CORE_WALLET_PASSWORD=$PROD_CORE_WALLET_PASSWORD
+    - MONGO_HOST=mongo
+    - TZ=Europe/Paris
+    - REVEAL_TIMEOUT_PERIOD=120000
+    - IEXEC_ASK_REPLICATE_PERIOD=15000
+    - IEXEC_PRIVATE_CHAIN_ADDRESS=$CHAIN_URL
+    - POOL_ADDRESS=$PROD_POOL_ADDRESS
+    - IEXEC_START_BLOCK_NUMBER=$CHAIN_LAST_BLOCK
+    - IEXEC_GAS_PRICE_MULTIPLIER=$GAS_PRICE_MULTIPLIER
+    - IEXEC_GAS_PRICE_CAP=$GAS_PRICE_CAP
+    - IEXEC_CORE_CHAIN_ADAPTER_HOST=$PROD_CHAIN_ADAPTER_HOST
+    - IEXEC_CORE_CHAIN_ADAPTER_PROTOCOL=http
+    - IEXEC_CORE_CHAIN_ADAPTER_PORT=13010
+    - IEXEC_CORE_CHAIN_ADAPTER_PASSWORD=$PROD_CHAIN_ADAPTER_PASSWORD
+    - IEXEC_RESULT_REPOSITORY_HOST=$RESULT_HOST
+    - IEXEC_RESULT_REPOSITORY_PORT=443
+    - IEXEC_RESULT_REPOSITORY_PROTOCOL=https
+    - IEXEC_PLATFORM_REGISTRY=http://platform-registry:8888
+    - IEXEC_PLATFORM_REGISTRY_STACK=$CHAIN_ID
+    - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health
+    - VIRTUAL_HOST=${PROD_CORE_HOST}
+    - LETSENCRYPT_HOST=${PROD_CORE_HOST}
+    - VIRTUAL_PORT=13000
+    - sms.scone=dummy
+    - sms.gramine=dummy
+    healthcheck:
+      test: curl --fail http://localhost:13000/actuator/health || exit 1
+    image: iexechub/iexec-core:8.3.0
+    restart: unless-stopped
+    volumes:
+    - ./core_wallet.json:/iexec-wallet/encrypted-wallet.json
+    networks:
+      - iexec_network
+    ports:
+      - 13000:13000
+  
+  grafana:
+    container_name: grafana
+    depends_on:
+    - mongo
+    - mongodb-proxy
+    environment:
+    - MONGO_PROXY_URL=http://mongodb-proxy:3333
+    - MONGO_DB_NAME=iexec
+    - MONGO_URL=mongodb://mongo:13002
+    - GF_SECURITY_ADMIN_PASSWORD=$PROD_GRAFANA_ADMIN_PASSWORD
+    - GRAFANA_HOST=localhost:3000
+    - GF_AUTH_ANONYMOUS_ENABLED=true
+    - GF_AUTH_ANONYMOUS_ORG_NAME=ViewerOrg
+    - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    - GF_ALLOW_SIGN_UP=false
+    - GF_PANELS_DISABLE_SANITIZE_HTML=true
+    - GRAFANA_HOME_NAME=$WORKERPOOL_DESCRIPTION
+    - GRAFANA_HOME_LOGO_WIDTH=35
+    - GRAFANA_HOME_LOGO_HEIGHT=35
+    - GRAFANA_HOME_LOGO_PATH=https://iex.ec/wp-content/uploads/2018/12/token.svg
+    - ACTIVATE_POOL_JOIN=0
+    - POOL_JOIN_WORKER_POOLNAME=
+    - POOL_JOIN_DEPOSIT=
+    - POOL_JOIN_CHAIN=
+    - POOL_JOIN_MINETHEREUM=
+    - POOL_JOIN_HUBCONTRACT=
+    - POOL_JOIN_WORKER_DOCKER_IMAGE_VERSION=
+    - POOL_JOIN_IEXEC_CORE_HOST=
+    - POOL_JOIN_https_=
+    - POOL_JOIN_IEXEC_SDK_VERSION=
+    - VIRTUAL_HOST=${PROD_GRAFANA_HOST}
+    - VIRTUAL_PATH=/
+    - LETSENCRYPT_HOST=${PROD_GRAFANA_HOST}
+    - VIRTUAL_PORT=3000
+    image: iexechub/grafana:4.0.0
+    restart: unless-stopped
+    networks:
+      - iexec_network
+    ports:
+      - 3000:3000
+  
+  letsencrypt:
+    container_name: letsencrypt
+    depends_on:
+    - nginx-proxy
+    environment:
+    - DEFAULT_EMAIL=$LETSENCRYPT_ADMIN_EMAIL
+    - NGINX_PROXY_CONTAINER=nginx-proxy
+    image: nginxproxy/acme-companion:2.2
+    restart: unless-stopped
+    volumes:
+    - nginxconf:/etc/nginx/conf.d
+    - nginxvhost:/etc/nginx/vhost.d
+    - nginxhtml:/usr/share/nginx/html
+    - nginxcerts:/etc/nginx/certs:rw
+    - companioncerts:/etc/acme.sh
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - iexec_network
+  
+  mongo:
+    container_name: mongo
+    command: -c "mongod --bind_ip_all --port 13002"
+    entrypoint: /bin/bash
+    image: library/mongo:4.4
+    restart: unless-stopped
+    volumes:
+    - mongodb-data:/data/db
+    networks:
+      - iexec_network
+  
+  mongo_ui:
+    container_name: mongo_ui
+    environment:
+    - ME_CONFIG_BASICAUTH_USERNAME=admin
+    - ME_CONFIG_BASICAUTH_PASSWORD=$PROD_MONGO_PASSWORD
+    - ME_CONFIG_MONGODB_PORT=13002
+    - VCAP_APP_PORT=13003
+    image: mongo-express:0.54
+    ports:
+    - 7002:13003
+    restart: unless-stopped
+    networks:
+      - iexec_network
+  
+  mongodb-proxy:
+    container_name: mongodb-proxy
+    image: iexechub/grafana-proxy:1.0.0
+    restart: unless-stopped
+    networks:
+      - iexec_network
+  
+  # nginx-forbidden:
+  #   container_name: nginx-forbidden
+  #   environment:
+  #   - VIRTUAL_HOST=${PROD_GRAFANA_HOST}
+  #   - VIRTUAL_PATH=~ ^/api/(?!(dashboards|annotations|datasources|live|plugins|search))
+  #   image: nginx:1.23
+  #   volumes:
+  #   - ./nginx_deny_all.conf:/etc/nginx/conf.d/default.conf:ro
+  #   networks:
+  #     - iexec_network
+  
+  nginx-proxy:
+    container_name: nginx-proxy
+    image: nginxproxy/nginx-proxy:1.2
+    ports:
+    - 80:80
+    - 443:443
+    restart: unless-stopped
+    volumes:
+    - nginxconf:/etc/nginx/conf.d
+    - nginxvhost:/etc/nginx/vhost.d
+    - nginxhtml:/usr/share/nginx/html
+    - nginxcerts:/etc/nginx/certs:ro
+    - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - iexec_network
+  
+  order-publisher-std:
+    container_name: order-publisher-std
+    depends_on:
+    - core
+    environment:
+    - CORE_URL=http://core:13000
+    - MARKET_URL=https://$MARKET_API_HOST
+    - CHAIN=$CHAIN
+    - PUBLISH_PERIOD=3
+    - CHECK_SLEEP_TIME=30
+    - WALLETPASSWORD=$PROD_CORE_WALLET_PASSWORD
+    - DAEMONIZE=true
+    - IS_GPU_POOL=false
+    - MAX_ORDER_NUMBER=${MAX_ORDER_NUMBER:-}
+    - WORKERPOOL=$PROD_POOL_ADDRESS
+    - WORKERPOOL_PRICE=$WORKERPOOL_PRICE
+    - WORKERPOOL_PRICE_MIN=
+    - WORKERPOOL_PRICE_MAX=
+    - VOLUME=1
+    - CATEGORY=0
+    - TRUST=1
+    - TAG=0x0000000000000000000000000000000000000000000000000000000000000000
+    - APP_RESTRICT=
+    - DATASET_RESTRICT=
+    - REQUESTER_RESTRICT=${ORDER_PUBLISHER_REQUESTER_RESTRICT:-}
+    - IEXEC_MARKETPLACE_API_URL=http://market-api:3001
+    - IEXEC_MARKETPLACE_ENABLED=true
+    image: iexechub/iexec-order-publisher:8.0.0-p001
+    restart: unless-stopped
+    volumes:
+    - ./core_wallet.json:/wallets/wallet.json
+    - ./chain_docker.json:/iexec/chain.json:ro
+    networks:
+      - iexec_network
+  
+  platform-registry:
+    container_name: platform-registry
+    environment:
+    - SPRING_PROFILES_ACTIVE=native
+    - VIRTUAL_HOST=${PROD_PLATFORM_REGISTRY_HOST}
+    - LETSENCRYPT_HOST=${PROD_PLATFORM_REGISTRY_HOST}
+    - VIRTUAL_PORT=8888
+    image: hyness/spring-cloud-config-server:3.1
+    restart: unless-stopped
+    volumes:
+    - ./platform-registry-config:/config
+    networks:
+      - iexec_network
+    ports:
+    - 8888:8888
+
+  market-api:
+    container_name: market-api
+    image: iexechub/iexec-market-api
+    ports:
+      - 3001:3000
+    environment:
+      - MONGO_HOST=mongo-market
+      - REDIS_HOST=redis-market
+      - IEXEC_BLOCKCHAIN_ADAPTER_API_HUB_ADDRESS=$CHAIN_HUB_ADDRESS
+      - CHAINS=LOCAL
+      - LOCAL_CHAIN_ID=1337
+      - LOCAL_ETH_RPC_HOST=http://host.docker.internal:8545
+      - LOCAL_IEXEC_ADDRESS=$CHAIN_HUB_ADDRESS
+    depends_on:
+      - mongo-market
+    networks:
+      - iexec_network
+
+  mongo-market:
+    container_name: mongo-market
+    image: mongo:4.4
+    expose:
+      - 27017
+    networks:
+      - iexec_network
+
+  redis-market:
+    container_name: redis-market
+    restart: unless-stopped
+    image: redis:alpine
+    command: redis-server --appendonly yes
+    expose:
+      - 6379
+    networks:
+      - iexec_network
+
+  sms:
+    container_name: sms
+    image: iexechub/iexec-sms:8.3.0
+    ports:
+      - 13300:13300
+    environment:
+      - IEXEC_SMS_BLOCKCHAIN_NODE_ADDRESS=http://host.docker.internal:8545
+      - IEXEC_HUB_ADDRESS=$CHAIN_HUB_ADDRESS
+      - IEXEC_CHAIN_ID=1337
+
+volumes:
+  companioncerts: null
+  mongodb-data: null
+  nginxcerts: null
+  nginxconf: null
+  nginxhtml: null
+  nginxvhost: null
+
+networks:
+  iexec_network:
+    external: true

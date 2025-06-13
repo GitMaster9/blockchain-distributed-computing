@@ -1,2 +1,13 @@
 **/__pycache__
+
 **/node_modules
+
+**/chain.json
+**/core_wallet.json
+**/deployed.json
+**/iexec.json
+**/worker_wallet.json
+**/iapp.config.json
+**/requester_wallet.json
+
+!/iexec/private-blockchain/scheduler-core/chain.json

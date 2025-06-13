@@ -1,0 +1,41 @@
+services:
+  worker:
+    container_name: $WORKER_NAME
+    environment:
+    - IEXEC_DEVELOPER_LOGGER_ENABLED=False
+    - IEXEC_WORKER_DOCKER_NETWORK_NAME=iexec_network
+    - IEXEC_CORE_HOST=$PROD_CORE_HOST
+    - IEXEC_CORE_PORT=13000
+    - IEXEC_CORE_PROTOCOL=http
+    - IEXEC_WORKER_WALLET_PATH=/${WALLET:?Wallet is mandatory}
+    - IEXEC_WORKER_WALLET_PASSWORD=$PROD_WALLET_PASSWORD
+    - IEXEC_WORKER_NAME=$WORKER_NAME
+    - IEXEC_WORKER_BASE_DIR=$RESULTS_DIR
+    - IEXEC_WORKER_OVERRIDE_BLOCKCHAIN_NODE_ADDRESS=$CHAIN_URL
+    - IEXEC_WORKER_OVERRIDE_AVAILABLE_CPU_COUNT=${WORKER_AVAILABLE_CPU:-}
+    - IEXEC_CORE_GRAYLOG_HOST=
+    - IEXEC_WORKER_GPU_ENABLED=False
+    - IEXEC_GAS_PRICE_MULTIPLIER=$GAS_PRICE_MULTIPLIER
+    - IEXEC_GAS_PRICE_CAP=$GAS_PRICE_CAP
+    - IEXEC_WORKER_SGX_DRIVER_MODE=NONE
+    - IEXEC_WORKER_DOCKER_REGISTRY_ADDRESS_1=${REGISTRY_ADDRESS:-}
+    - IEXEC_WORKER_DOCKER_REGISTRY_USERNAME_1=${REGISTRY_USERNAME:-}
+    - IEXEC_WORKER_DOCKER_REGISTRY_PASSWORD_1=${REGISTRY_PASSWORD:-}
+    - POOL_ADDRESS=$WORKERPOOL_ADDRESS
+    - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health
+    healthcheck:
+      test: curl --fail http://localhost:13100/actuator/health || exit 1
+    image: iexechub/iexec-worker:8.3.0
+    networks:
+      iexec_network:
+        aliases:
+          - worker
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $RESULTS_DIR:$RESULTS_DIR
+      - ./$WALLET:/$WALLET
+
+networks:
+  iexec_network:
+    external: true

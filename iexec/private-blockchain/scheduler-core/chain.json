@@ -1,0 +1,13 @@
+{
+  "default": "local",
+  "chains": {
+    "mainnet": {},
+    "bellecour": {},
+    "local": {
+      "host": "http://localhost:8545",
+      "iexecGateway": "http://localhost:3001",
+      "id": "1337",
+      "hub": "0xFBFa97176C6bbDa07aCB9554A01167Eb0bcECB65"
+    }
+  }
+}
