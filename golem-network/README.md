@@ -1,2 +1,2 @@
-# Golem Workerpool
-This repository is an example of how to set up a provider node and a requestor node on the Golem Network testnet which doesn't use real tokens.
+# Golem Network
+This directory has instructions on how to use the Golem Network as a requestor and a provider node (in their own subdirectories).
