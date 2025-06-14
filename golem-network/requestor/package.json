@@ -1,0 +1,17 @@
+{
+  "name": "requestor",
+  "version": "1.0.0",
+  "description": "1. Build the Golem image (use the ``build-golem-image`` directory).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@golem-sdk/pino-logger": "^1.1.0",
+    "@golem-sdk/task-executor": "^2.1.0",
+    "commander": "^14.0.0"
+  }
+}

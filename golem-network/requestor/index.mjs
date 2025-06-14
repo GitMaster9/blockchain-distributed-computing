@@ -3,8 +3,8 @@ import { TaskExecutor } from "@golem-sdk/task-executor";
 import { pinoPrettyLogger } from "@golem-sdk/pino-logger";
 import { OfferProposalFilterFactory } from "@golem-sdk/golem-js";
 
-const INPUT_FILE = "/golem/tmp/input.txt";
-const OUTPUT_FILE = "/golem/tmp/output.txt";
+const INPUT_FILE = "/golem/tmp/simulation_config.json";
+const OUTPUT_FILE = "/golem/tmp/output.h5";
 
 const DEFAULT_PROVIDERS_WHITELIST = ["testnet-c1-0", "testnet-c1-1"];
 
@@ -29,7 +29,7 @@ const whitelistProviders = options.whitelistProviders
     api: { key: "try_golem" },
     demand: {
       workload: {
-        imageHash: "18901b10914cabab1d0ca3495b3dfeac182c28e9d90651df682233f1",
+        imageHash: "9e7947d1cfed03da910cd80941f3c704c86be35b552527da6e294e43",
       },
     },
     market: {
@@ -51,15 +51,14 @@ const whitelistProviders = options.whitelistProviders
       return (
         await exe
           .beginBatch()
-          .uploadFile("./input.txt", INPUT_FILE)
-          .run(`python /golem/main.py ${INPUT_FILE} > ${OUTPUT_FILE}`)
-          .run(`cat ${OUTPUT_FILE}`)
-          .downloadFile(OUTPUT_FILE, "./output.txt")
+          .uploadFile("./simulation_config.json", INPUT_FILE)
+          .run(`python /golem/main.py ${INPUT_FILE}`)
+          .downloadFile(OUTPUT_FILE, "./output.h5")
           .end()
       );
     });
 
-    console.log(result[2]?.stdout);
+    console.log(result[1]?.stdout);
   } catch (error) {
     console.error("Computation failed:", error);
   } finally {

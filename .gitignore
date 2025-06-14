@@ -11,5 +11,7 @@
 **/requester_wallet.json
 
 **/*.h5
+**/*.gvmi
+**/*.gvmi.descr.bin
 
 !/iexec/private-blockchain/scheduler-core/chain.json
