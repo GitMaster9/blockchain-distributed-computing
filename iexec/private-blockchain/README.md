@@ -1,6 +1,8 @@
 # Ganache tutorial
 This is a work-in-progress tutorial for starting a private Ganache test blockchain, deploying iExec PoCo smart contracts on it and using it to register an iExec workerpool.
 
+NOTE: using a private blockchain with this repository is still in development
+
 ## Ganache blockchain
 1. Start Ganache AppImage (GUI app)
 

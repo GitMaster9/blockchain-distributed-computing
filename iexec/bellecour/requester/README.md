@@ -2,6 +2,10 @@
 This is a tutorial on how to use a Docker image for task execution as a requestor on the iExec Bellecour sidechain (testnet).
 You can use any public Docker image or build your own.
 
+### References
+This repository was set up using following documentation sites and repositories:
+- https://tools.docs.iex.ec/overview/helloWorld/3-buildIApp
+
 
 ### Tutorial
 1. Initialize iexec workspace

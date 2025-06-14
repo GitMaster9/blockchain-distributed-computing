@@ -1,5 +1,12 @@
-# Scheduler Core tutorial
+# Scheduler Core
 
+### References
+This repository was set up using following documentation sites and repositories:
+
+- https://protocol.docs.iex.ec/for-workers/manage-a-pool-of-workers
+- https://github.com/iExecBlockchainComputing/deploy-workerpool
+
+### Tutorial
 1. Make sure you are in the "scheduler-core" directory
 ```bash
 cd scheduler-core
