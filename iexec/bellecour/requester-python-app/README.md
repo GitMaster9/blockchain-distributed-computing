@@ -62,21 +62,21 @@ iexec orderbook app 0x28Ce45adEC5303ED0f6100375A7bA9049eC937b8
 
 9. Run the app on the specified workerpool you created
 ```bash
-iexec app run [appAddress] --workerpool [workerpoolAddress]
+iexec app run [appAddress] --workerpool [workerpoolAddress] --wallet-file [walletName] --keystoredir ./
 ```
 
 ```bash
-iexec app run 0x28Ce45adEC5303ED0f6100375A7bA9049eC937b8 --workerpool 0x767eb830fd670d221C761b0c144a33Ec39a5902E
+iexec app run 0x28Ce45adEC5303ED0f6100375A7bA9049eC937b8 --workerpool 0x767eb830fd670d221C761b0c144a33Ec39a5902E --wallet-file "requester_wallet.json" --keystoredir ./
 ```
 
 You can use a string argument to use for task output.
 
 ```bash
-iexec app run [appAddress] --workerpool 0x767eb830fd670d221C761b0c144a33Ec39a5902E --args [StringArgument]
+iexec app run [appAddress] --workerpool [workerpoolAddress] --wallet-file [walletName] --keystoredir ./ --args [StringArgument]
 ```
 
 ```bash
-iexec app run 0x28Ce45adEC5303ED0f6100375A7bA9049eC937b8 --workerpool 0x767eb830fd670d221C761b0c144a33Ec39a5902E --args MyArgument
+iexec app run 0x28Ce45adEC5303ED0f6100375A7bA9049eC937b8 --workerpool 0x767eb830fd670d221C761b0c144a33Ec39a5902E --wallet-file "requester_wallet.json" --keystoredir ./ --args MyArgument
 ```
 
 This will create a deal with a generated ID (dealid).
