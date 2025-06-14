@@ -10,4 +10,6 @@
 **/iapp.config.json
 **/requester_wallet.json
 
+**/*.h5
+
 !/iexec/private-blockchain/scheduler-core/chain.json
