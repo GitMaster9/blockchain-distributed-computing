@@ -1,35 +1,63 @@
 import argparse
-from pathlib import Path
+import json
+from radiation_transport import Simulation
 
-DEFAULT_FILEPATH = "input.txt"
+def main():
+    parser = argparse.ArgumentParser(description="1D Radiation Transport Simulation")
 
-parser = argparse.ArgumentParser(description='Process a file path.')
-parser.add_argument(
-    "file_path",
-    nargs="?",
-    default=DEFAULT_FILEPATH,  # Set your default file path here
-    help=f"Path to the input file (default: {DEFAULT_FILEPATH})"
-)
-args = parser.parse_args()
+    parser.add_argument("--config_file", type=str, default=None, help="Config file path")
+    parser.add_argument("--num_photons", type=int, default=100_000, help="Number of photons to simulate")
+    parser.add_argument("--slab_thickness", type=float, default=10.0, help="Thickness of the slab")
+    parser.add_argument("--attenuation_coeff", type=float, default=0.1, help="Attenuation coefficient")
+    parser.add_argument("--use_scatter", type=bool, default=False, help="Use scatter mode")
+    parser.add_argument("--p_scatter", type=float, default=0.7, help="Scatter probability")
+    parser.add_argument("--p_scatter_reverses_direction", type=float, default=0.5, help="Scatter probability")
+    parser.add_argument("--seed", type=int, default=1, help="Scatter probability")
 
-input_file_name = str(args.file_path)
+    args = parser.parse_args()
 
-print(f"The file path used is: {input_file_name}")
+    if args.config_file:
+        file_path = str(args.config_file)
+        print(f"Loading simulation parameters from file: '{file_path}'. Ignoring other parameter arguments.")
 
-output_string = "Hello, "
-
-input_file_path = Path(input_file_name)
-
-if input_file_path.exists():
-    print(f"{input_file_name} exists.")
-    contents = input_file_path.read_text()
-    if contents == "":
-        print(f"{input_file_name} is empty.")
-        output_string += "Empty World"
+        try:
+            with open(file_path, "r") as f:
+                params = json.load(f)
+            
+            num_photons = int(params["num_photons"])
+            slab_thickness = float(params["slab_thickness"])
+            attenuation_coeff = float(params["attenuation_coeff"])
+            use_scatter = bool(params["use_scatter"])
+            p_scatter = float(params["p_scatter"])
+            p_scatter_reverses_direction = float(params["p_scatter_reverses_direction"])
+            seed = int(params["seed"])
+        
+        except Exception as e:
+            print(f"Error reading parameters from file {file_path}")
+            print(e)
+            return
+    
     else:
-        output_string += contents
-else:
-    print(f"{input_file_name} does not exist.")
-    output_string += "World"
+        print("No configuration file given. Loading simulation parameters.")
 
-print(output_string)
+        num_photons = int(args.num_photons)
+        slab_thickness = float(args.slab_thickness)
+        attenuation_coeff = float(args.attenuation_coeff)
+        use_scatter = bool(args.use_scatter)
+        p_scatter = float(args.p_scatter)
+        p_scatter_reverses_direction = float(args.p_scatter_reverses_direction)
+        seed = int(args.seed)
+
+    simulation = Simulation(num_photons=num_photons,
+                            slab_thickness=slab_thickness,
+                            attenuation_coeff=attenuation_coeff,
+                            use_scatter=use_scatter,
+                            p_scatter=p_scatter,
+                            p_scatter_reverses_direction=p_scatter_reverses_direction,
+                            seed=seed)
+    
+    simulation.run_simulation()
+    simulation.save_to_file("output")
+
+if __name__ == "__main__":
+    main()
