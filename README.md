@@ -6,3 +6,8 @@ I wrote a Monte Carlo simulation of a simplified 1D Photon Radiation Transport u
 
 ### Provider node
 There are instructions to set up your machine as a (resource, machine) provider on both Golem and iExec platforms in their own subdirectories. For both platform a free and public testnet is used but requestor nodes can use specific provider nodes if needed.
+
+### References
+- https://docs.golem.network/
+- https://www.iex.ec/
+- https://tools.docs.iex.ec/

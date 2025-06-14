@@ -1,6 +1,9 @@
 # Golem Requestor
 Golem Network used Golem images for task execution. You can use public Golem images or build your own by building a Docker image and then converting it into a Golem image using Golem CLI tools (instructions are in the ``build-golem-image`` directory).
 
+### References
+- https://docs.golem.network/docs/quickstarts/js-quickstart
+
 ### Tutorial
 1. Set the ``imageHash`` property in the ``index.mjs`` file (use the generated image hash if you built your own Golem image).
 

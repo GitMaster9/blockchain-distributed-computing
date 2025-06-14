@@ -1,5 +1,12 @@
 # Build Golem Image
 
+### References
+- https://docs.golem.network/docs/quickstarts/js-quickstart
+- https://docs.golem.network/docs/creators/tools/gvmkit/converting-docker-image-to-golem-format
+- https://docs.golem.network/docs/creators/tools/gvmkit/gvmkit-build-installation
+
+### Tutorial
+
 1. go to ``requestor/build-golem-image`` directory.
 ```bash
 cd requestor/build-golem-image
