@@ -1,11 +1,12 @@
 # iExec Bellecour
 This directory has instructions on how to use the iExec platform as a requester and a provider using iExec's Bellecour testnet.
 
-Also, you can add a worker to the workerpool and request a task to be executed on that workerpool.
-# TODO
+You can register an iExec workerpool and add workers to the pool. To manage a workerpool you need to set up a workerpool scheduler (``scheduler-core`` subdirectory).
+Then you can add a worker to the workerpool and request a task (as the requestor) to be executed on that workerpool.
 
-## References
-This repository was set up using following documentation sites and repositories:
+### Steps
+1. Go to ``scheduler-core`` subdirectory to set up the workerpool and its scheduler.
+2. Go to ``worker`` subdirectory and follow the instructions there to add workers to the pool.
+3. Go to ``requester`` subdirectory and follow the instructions there to request a task. You can create your own Docker image (``requester/build-docker-image``) to be executed on the iExec platform.
 
-- https://protocol.docs.iex.ec/for-workers/manage-a-pool-of-workers
-- https://github.com/iExecBlockchainComputing/deploy-workerpool
+NOTE: ``requester-python-app`` is deprecated.
