@@ -1,5 +1,8 @@
 # Python API
 
+### Python version
+Currently the latest Python version that is tested and working in the requestor script is 3.10.13. Create a Python virtual environment with this version and then use it to execute the script.
+
 ### References
 - https://docs.golem.network/docs/quickstarts/python-quickstart
 
