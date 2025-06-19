@@ -4,4 +4,5 @@ Golem Network uses Golem images for task execution. You can use public Golem ima
 This repository offers multiple ways of task execution in their respective subdirectories:
 1. Javascript API - golem-sdk
 2. Python API - yapapi
-3. Ray on Golem API (IN DEVELOPMENT)
+3. Golem  Dapps - dapp-runner and dapp-manager
+4. Ray on Golem API (IN DEVELOPMENT)
