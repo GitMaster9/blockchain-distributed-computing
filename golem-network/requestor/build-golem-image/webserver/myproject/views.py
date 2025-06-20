@@ -29,7 +29,7 @@ def start_task(request):
             simulation = radiation_transport.Simulation()
             simulation.run_simulation()
             
-            task_output = simulation.get_h5_data()
+            task_output = simulation.save_to_buffer()
             
             task_state['state'] = 'done'
         

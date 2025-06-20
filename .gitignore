@@ -13,5 +13,6 @@
 **/*.h5
 **/*.gvmi
 **/*.gvmi.descr.bin
+**/*.sqlite3
 
 !/iexec/private-blockchain/scheduler-core/chain.json

@@ -85,6 +85,30 @@ class Simulation:
         self.absorbed_fraction = self.absorbed_count / self.num_photons
         self.escaped_fraction = escaped_count / self.num_photons
 
+    def save_to_buffer(self):
+        buffer = io.BytesIO()
+        
+        with h5py.File(buffer, 'w') as f:
+            f.attrs["num_photons"] = self.num_photons
+            f.attrs["slab_thickness"] = self.slab_thickness
+            f.attrs["attenuation_coeff"] = self.attenuation_coeff
+            f.attrs["use_scatter"] = self.use_scatter
+            f.attrs["p_scatter"] = self.p_scatter
+            f.attrs["p_scatter_reverses_direction"] = self.p_scatter_reverses_direction
+            f.attrs["seed"] = self.seed
+
+            f.create_dataset("absorbed_positions", data=self.absorbed_positions, compression="gzip")
+            f.attrs["absorbed_count"] = self.absorbed_count
+            f.attrs["absorbed_fraction"] = self.absorbed_fraction
+            
+            f.attrs["escaped_count"] = self.escaped_count
+            f.attrs["escaped_fraction"] = self.escaped_fraction
+
+            f.attrs["time_needed"] = self.time_needed
+        
+        buffer.seek(0)
+        return buffer.getvalue()
+
     def save_to_file(self, file_name: str):
         file_path = f"{file_name}.h5"
         with h5py.File(file_path, "w") as f:
@@ -145,29 +169,3 @@ class Simulation:
         self.escaped_fraction = escaped_fraction
 
         self.time_needed = time_needed
-
-    def get_h5_data(self):
-        # Create H5 file in memory
-        buffer = io.BytesIO()
-        
-        with h5py.File(buffer, 'w') as f:
-            # Create datasets (like model weights)
-            f.attrs["num_photons"] = self.num_photons
-            f.attrs["slab_thickness"] = self.slab_thickness
-            f.attrs["attenuation_coeff"] = self.attenuation_coeff
-            f.attrs["use_scatter"] = self.use_scatter
-            f.attrs["p_scatter"] = self.p_scatter
-            f.attrs["p_scatter_reverses_direction"] = self.p_scatter_reverses_direction
-            f.attrs["seed"] = self.seed
-
-            f.create_dataset("absorbed_positions", data=self.absorbed_positions, compression="gzip")
-            f.attrs["absorbed_count"] = self.absorbed_count
-            f.attrs["absorbed_fraction"] = self.absorbed_fraction
-            
-            f.attrs["escaped_count"] = self.escaped_count
-            f.attrs["escaped_fraction"] = self.escaped_fraction
-
-            f.attrs["time_needed"] = self.time_needed
-        
-        buffer.seek(0)
-        return buffer.getvalue()

@@ -41,7 +41,7 @@
     
     <button id="start-btn" class="start-btn" onclick="startTask()">Start Task</button>
     <button id="reset-btn" class="reset-btn" onclick="resetTask()">Reset</button>
-    <button id="download-btn" class="download-btn" onclick="downloadOutput()" style="display: none;">Download Output</button>
+    <button id="download-btn" class="download-btn" onclick="downloadOutput()">Download Output</button>
     
     <script>
         function updateStateDisplay(state) {
@@ -59,15 +59,15 @@
             if (state === 'waiting') {
                 startBtn.disabled = false;
                 resetBtn.disabled = true;
-                downloadBtn.style.display = 'none';
+                downloadBtn.disabled = true;
             } else if (state === 'running') {
                 startBtn.disabled = true;
                 resetBtn.disabled = true;
-                downloadBtn.style.display = 'none';
+                downloadBtn.disabled = true;
             } else if (state === 'done') {
                 startBtn.disabled = true;
                 resetBtn.disabled = false;
-                downloadBtn.style.display = 'inline-block';
+                downloadBtn.disabled = false;
             }
         }
         
@@ -121,7 +121,7 @@
                     console.error('Error:', error);
                     clearInterval(interval);
                 });
-            }, 3000); // Poll every 3 s
+            }, 3000); // Poll every 3 seconds (3000 milliseconds)
         }
         
         // Initialize the display
