@@ -1,7 +1,6 @@
 # Build Golem Image - single execution
 
 ### References
-- https://docs.golem.network/docs/quickstarts/js-quickstart
 - https://docs.golem.network/docs/creators/tools/gvmkit/converting-docker-image-to-golem-format
 - https://docs.golem.network/docs/creators/tools/gvmkit/gvmkit-build-installation
 
