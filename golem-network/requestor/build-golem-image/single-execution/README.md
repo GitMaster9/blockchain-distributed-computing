@@ -21,6 +21,11 @@ You can test your Docker image using the interactive bash terminal (without usin
 docker run -it golem-image bash
 ```
 
+3. Install ``gvmkit-build`` Python package:
+```bash
+pip install gvmkit-build
+```
+
 4. Convert the Docker image into a Golem image.
 ```bash
 gvmkit-build golem-image --push --nologin

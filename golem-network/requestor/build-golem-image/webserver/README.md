@@ -20,20 +20,25 @@ python manage.py runserver
 
 1. From the ``webserver`` directory, build the Docker image:
 ```bash
-docker build -t golem-image .
+docker build -t golem-image-webserver .
 ```
 
 You can test your Docker image by running the Django web server in a Docker container on port 8000.
 ```bash
-docker run -d -p 8000:8000 golem-image
+docker run -d -p 8000:8000 golem-image-webserver
 ```
 
-4. Convert the Docker image into a Golem image.
+2. Install ``gvmkit-build`` Python package:
 ```bash
-gvmkit-build golem-image --push --nologin
+pip install gvmkit-build
 ```
 
-5. Save the generated image hash (``image link`` value). Example:
+3. Convert the Docker image into a Golem image.
+```bash
+gvmkit-build golem-image-webserver --push --nologin
+```
+
+4. Save the generated image hash (``image link`` value). Example:
 ```txt
--- image link (for use in SDK): 18901b10914cabab1d0ca3495b3dfeac182c28e9d90651df682233f1
+-- image link (for use in SDK): 54974f71ab794a1298b23ba19a872eace9b7e353298bdb91d05a627a
 ```
