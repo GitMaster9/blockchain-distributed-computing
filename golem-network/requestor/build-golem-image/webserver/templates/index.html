@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task State Server</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .state {
+            font-size: 24px;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .waiting { background-color: #f0f0f0; }
+        .running { background-color: #fff3cd; }
+        .done { background-color: #d4edda; }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .start-btn { background-color: #007bff; color: white; }
+        .reset-btn { background-color: #6c757d; color: white; }
+        .download-btn { background-color: #28a745; color: white; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <h1>Task State Server</h1>
+    
+    <div class="state" id="state-display">
+        Current State: <span id="current-state">{{ state }}</span>
+    </div>
+    
+    <button id="start-btn" class="start-btn" onclick="startTask()">Start Task</button>
+    <button id="reset-btn" class="reset-btn" onclick="resetTask()">Reset</button>
+    <button id="download-btn" class="download-btn" onclick="downloadOutput()" style="display: none;">Download Output</button>
+    
+    <script>
+        function updateStateDisplay(state) {
+            const stateElement = document.getElementById('current-state');
+            const displayElement = document.getElementById('state-display');
+            
+            stateElement.textContent = state;
+            displayElement.className = `state ${state}`;
+            
+            // Update button states
+            const startBtn = document.getElementById('start-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            if (state === 'waiting') {
+                startBtn.disabled = false;
+                resetBtn.disabled = true;
+                downloadBtn.style.display = 'none';
+            } else if (state === 'running') {
+                startBtn.disabled = true;
+                resetBtn.disabled = true;
+                downloadBtn.style.display = 'none';
+            } else if (state === 'done') {
+                startBtn.disabled = true;
+                resetBtn.disabled = false;
+                downloadBtn.style.display = 'inline-block';
+            }
+        }
+        
+        function startTask() {
+            fetch('/api/start/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateStateDisplay(data.state);
+                if (data.state === 'running') {
+                    // Poll for completion
+                    pollState();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        
+        function resetTask() {
+            fetch('/api/reset/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateStateDisplay(data.state);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function downloadOutput() {{
+            window.location.href = '/api/download/';
+        }}
+        
+        function pollState() {
+            const interval = setInterval(() => {
+                fetch('/api/state/')
+                .then(response => response.json())
+                .then(data => {
+                    updateStateDisplay(data.state);
+                    if (data.state === 'done') {
+                        clearInterval(interval);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    clearInterval(interval);
+                });
+            }, 3000); // Poll every 3 s
+        }
+        
+        // Initialize the display
+        updateStateDisplay('{{ state }}');
+    </script>
+</body>
+</html>
