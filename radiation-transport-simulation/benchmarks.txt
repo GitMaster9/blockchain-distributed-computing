@@ -1,0 +1,122 @@
+1.
+num_photons = 1_000_000_000
+slab_thickness = 10
+attenuation_coeff = 0.1
+use_scatter = False
+p_scatter = 0.7
+p_scatter_reverses_direction = 0.5
+seed = 1
+
+time: 561s - 9 min 21 s
+
+2.
+num_photons = 1_000_000_000
+slab_thickness = 10
+attenuation_coeff = 0.1
+use_scatter = True
+p_scatter = 0.7
+p_scatter_reverses_direction = 0.5
+seed = 1
+
+time: 1284s - 21 min 24 s
+
+3.
+num_photons = 1_000_000_000
+slab_thickness = 15
+attenuation_coeff = 0.1
+use_scatter = False
+p_scatter = 0.7
+p_scatter_reverses_direction = 0.5
+seed = 1
+
+time: 555 s - 9 min 15 s
+
+4.
+num_photons = 1_000_000_000
+slab_thickness = 15
+attenuation_coeff = 0.1
+use_scatter = True
+p_scatter = 0.7
+p_scatter_reverses_direction = 0.5
+seed = 1
+
+time: 1512.41 s - 25 min 12 s
+
+5.
+num_photons = 1_000_000_000
+slab_thickness = 10
+attenuation_coeff = 0.15
+use_scatter = False
+p_scatter = 0.7
+p_scatter_reverses_direction = 0.5
+seed = 1
+
+time: 562 s - 9 min 22 s
+
+6.
+num_photons = 1_000_000_000
+slab_thickness = 10
+attenuation_coeff = 0.15
+use_scatter = True
+p_scatter = 0.7
+p_scatter_reverses_direction = 0.5
+seed = 1
+
+time: 1558 s - 25 min 58 s
+
+7.
+num_photons = 1_000_000_000
+slab_thickness = 10
+attenuation_coeff = 0.1
+use_scatter = True
+p_scatter = 0.5
+p_scatter_reverses_direction = 0.5
+seed = 1
+
+time: 1110 s - 18 min 30 s
+
+8.
+num_photons = 1_000_000_000
+slab_thickness = 10
+attenuation_coeff = 0.1
+use_scatter = True
+p_scatter = 0.3
+p_scatter_reverses_direction = 0.5
+seed = 1
+
+time: 966 s - 16 min 6 s
+
+9.
+num_photons = 1_000_000_000
+slab_thickness = 10
+attenuation_coeff = 0.1
+use_scatter = True
+p_scatter = 0.7
+p_scatter_reverses_direction = 0.5
+seed = 10
+
+time: 1290 s - 21 min 30 s
+
+10.
+num_photons = 1_000_000_000
+slab_thickness = 10
+attenuation_coeff = 0.1
+use_scatter = True
+p_scatter = 0.7
+p_scatter_reverses_direction = 0.5
+seed = 20
+
+time: 1274 s - 21 min 14 s
+
+total:
+561
+1284
+555
+1512
+562
+1558
+1110
+966
+1290
+1274
+== 10672 s - 177 min 52 s
