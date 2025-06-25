@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 from typing import AsyncIterable
 
@@ -8,8 +9,6 @@ from yapapi.strategy import MarketStrategy, SCORE_TRUSTED, SCORE_REJECTED
 
 INPUT_FILE = "/golem/tmp/simulation_config.json"
 OUTPUT_FILE = "/golem/tmp/output.h5"
-
-DEFAULT_PROVIDERS_WHITELIST = ["testnet-c1-0", "testnet-c1-1"]
 
 class CustomProviderStrategy(MarketStrategy):
     def __init__(self, trusted_providers):
@@ -40,16 +39,29 @@ async def main():
         image_hash="9e7947d1cfed03da910cd80941f3c704c86be35b552527da6e294e43",
     )
 
-    strategy = CustomProviderStrategy(DEFAULT_PROVIDERS_WHITELIST)
-
     tasks = [Task(data=None)]
 
-    async with Golem(budget=1.0, subnet_tag="public", strategy=strategy) as golem:
-        async for completed in golem.execute_tasks(worker, tasks, payload=package):
-            print(completed.result.stdout)
+    parser = argparse.ArgumentParser(description="1D Radiation Transport Simulation")
+    parser.add_argument("--whitelist_providers", nargs="+", default=[], help="Add provider to whitelist")
+    args = parser.parse_args()
+
+    providers = list(args.whitelist_providers)
+    if providers:
+        print("Using providers from whitelist:")
+        print(providers)
+        strategy = CustomProviderStrategy(providers)
+
+        async with Golem(budget=1.0, subnet_tag="public", strategy=strategy) as golem:
+            async for completed in golem.execute_tasks(worker, tasks, payload=package):
+                print(completed.result.stdout)
+    else:
+        print("No providers whitelisted. Using any provider...")
+        async with Golem(budget=1.0, subnet_tag="public") as golem:
+            async for completed in golem.execute_tasks(worker, tasks, payload=package):
+                print(completed.result.stdout)
 
 if __name__ == "__main__":
-    enable_default_logger(log_file="hello.log")
+    enable_default_logger(log_file="requestor.log")
 
     loop = asyncio.get_event_loop()
     task = loop.create_task(main())

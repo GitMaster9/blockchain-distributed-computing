@@ -10,6 +10,7 @@
 **/iapp.config.json
 **/requester_wallet.json
 
+**/*.log
 **/*.h5
 **/*.gvmi
 **/*.gvmi.descr.bin
