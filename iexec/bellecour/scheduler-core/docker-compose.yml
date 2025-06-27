@@ -61,6 +61,7 @@ services:
     depends_on:
     - mongo
     - blockchain-adapter
+    - result-proxy
     environment:
     - IEXEC_CORE_WALLET_PATH=/iexec-wallet/encrypted-wallet.json
     - IEXEC_CORE_WALLET_PASSWORD=$PROD_CORE_WALLET_PASSWORD
@@ -78,8 +79,8 @@ services:
     - IEXEC_CORE_CHAIN_ADAPTER_PORT=13010
     - IEXEC_CORE_CHAIN_ADAPTER_PASSWORD=$PROD_CHAIN_ADAPTER_PASSWORD
     - IEXEC_RESULT_REPOSITORY_HOST=$RESULT_HOST
-    - IEXEC_RESULT_REPOSITORY_PORT=443
-    - IEXEC_RESULT_REPOSITORY_PROTOCOL=https
+    - IEXEC_RESULT_REPOSITORY_PORT=13200
+    - IEXEC_RESULT_REPOSITORY_PROTOCOL=http
     - IEXEC_PLATFORM_REGISTRY=http://platform-registry:8888
     - IEXEC_PLATFORM_REGISTRY_STACK=$CHAIN_ID
     - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health
@@ -264,6 +265,49 @@ services:
     ports:
     - 8888:8888
 
+  ipfs:
+    container_name: ipfs
+    image: ipfs/go-ipfs:master-2025-06-27-a0632aa
+    ports:
+      - 4001:4001
+      - 5001:5001
+      - 8080:8080
+    networks:
+      - iexec_network
+    volumes:
+      - ipfs-data:/data/ipfs
+
+  mongo-result-proxy:
+    container_name: mongo-result-proxy
+    command: -c "mongod --bind_ip_all --port 13202"
+    entrypoint: /bin/bash
+    image: library/mongo:4.4
+    restart: unless-stopped
+    volumes:
+    - mongo-result-data:/data/db
+    networks:
+      - iexec_network
+    ports:
+      - 13202:13202
+
+  result-proxy:
+    container_name: result-proxy
+    image: iexechub/iexec-result-proxy:8.3.0
+    environment:
+      - IEXEC_GAS_PRICE_MULTIPLIER=$GAS_PRICE_MULTIPLIER # ne radi na 9.0.0
+      - MONGO_HOST=mongo-result-proxy
+      - MONGO_PORT=13202
+      - IEXEC_IPFS_HOST=ipfs
+      - IEXEC_IPFS_PORT=5001
+      #- IEXEC_IPFS_URL=http://ipfs:5001 # novi API (verzija 9.0.0)
+    networks:
+      - iexec_network
+    ports:
+      - 13200:13200
+    depends_on:
+      - mongo-result-proxy
+      - ipfs
+
 volumes:
   companioncerts: null
   mongodb-data: null
@@ -271,6 +315,8 @@ volumes:
   nginxconf: null
   nginxhtml: null
   nginxvhost: null
+  mongo-result-data: null
+  ipfs-data: null
 
 networks:
   iexec_network:
