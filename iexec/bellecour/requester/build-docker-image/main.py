@@ -21,7 +21,7 @@ def main():
     parser.add_argument("--p_scatter", type=float, default=0.7, help="Scatter probability")
     parser.add_argument("--p_scatter_reverses_direction", type=float, default=0.5, help="Scatter reverses direction probability")
     parser.add_argument("--seed", type=int, default=1, help="Seed")
-    parser.add_argument('--save_full_result', type=str2bool, default=False, help="Save full result file")
+    parser.add_argument('--skip_full_result_save', type=str2bool, default=False, help="Skip saving the full result file")
 
     args = parser.parse_args()
 
@@ -40,7 +40,7 @@ def main():
             p_scatter = float(params["p_scatter"])
             p_scatter_reverses_direction = float(params["p_scatter_reverses_direction"])
             seed = int(params["seed"])
-            save_full_result = bool(params["save_full_result"])
+            skip_full_result_save = bool(params["skip_full_result_save"])
         
         except Exception as e:
             print(f"Error reading parameters from file {file_path}")
@@ -62,21 +62,23 @@ def main():
         p_scatter = float(args.p_scatter)
         p_scatter_reverses_direction = float(args.p_scatter_reverses_direction)
         seed = int(args.seed)
-        save_full_result = bool(args.save_full_result)
+        skip_full_result_save = bool(args.skip_full_result_save)
 
-    simulation = Simulation(num_photons=num_photons,
-                            slab_thickness=slab_thickness,
-                            attenuation_coeff=attenuation_coeff,
-                            use_scatter=use_scatter,
-                            p_scatter=p_scatter,
-                            p_scatter_reverses_direction=p_scatter_reverses_direction,
-                            seed=seed)
+    simulation = Simulation(
+        num_photons=num_photons,
+        slab_thickness=slab_thickness,
+        attenuation_coeff=attenuation_coeff,
+        use_scatter=use_scatter,
+        p_scatter=p_scatter,
+        p_scatter_reverses_direction=p_scatter_reverses_direction,
+        seed=seed
+        )
     
     simulation.run_simulation()
 
     output_file_name = IEXEC_OUT + '/output'
     
-    simulation.save_to_file(output_file_name, save_full_result)
+    simulation.save_to_file(output_file_name, skip_full_result_save)
 
     computed_json = {'deterministic-output-path': output_file_name + '.h5'}
     with open(IEXEC_OUT + '/computed.json', 'w') as f:
