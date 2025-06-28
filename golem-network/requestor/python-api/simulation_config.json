@@ -6,5 +6,5 @@
   "p_scatter": 0.7,
   "p_scatter_reverses_direction": 0.5,
   "seed": 1,
-  "save_full_result": true
+  "skip_full_result_save": false
 }
