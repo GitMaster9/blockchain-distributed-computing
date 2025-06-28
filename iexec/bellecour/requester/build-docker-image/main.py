@@ -3,6 +3,9 @@ import argparse
 import json
 from radiation_transport import Simulation
 
+def str2bool(v):
+    return v.lower() in ('yes', 'true', 't', '1')
+
 def main():
     IEXEC_OUT = os.getenv('IEXEC_OUT')
     if IEXEC_OUT is None:
@@ -14,11 +17,11 @@ def main():
     parser.add_argument("--num_photons", type=int, default=100_000, help="Number of photons to simulate")
     parser.add_argument("--slab_thickness", type=float, default=10.0, help="Thickness of the slab")
     parser.add_argument("--attenuation_coeff", type=float, default=0.1, help="Attenuation coefficient")
-    parser.add_argument("--use_scatter", type=bool, default=False, help="Use scatter mode")
+    parser.add_argument("--use_scatter", type=str2bool, default=False, help="Use scatter mode")
     parser.add_argument("--p_scatter", type=float, default=0.7, help="Scatter probability")
-    parser.add_argument("--p_scatter_reverses_direction", type=float, default=0.5, help="Scatter probability")
-    parser.add_argument("--seed", type=int, default=1, help="Scatter probability")
-    parser.add_argument("--save_full_result", type=bool, default=True, help="Save full result file")
+    parser.add_argument("--p_scatter_reverses_direction", type=float, default=0.5, help="Scatter reverses direction probability")
+    parser.add_argument("--seed", type=int, default=1, help="Seed")
+    parser.add_argument('--save_full_result', type=str2bool, default=False, help="Save full result file")
 
     args = parser.parse_args()
 
