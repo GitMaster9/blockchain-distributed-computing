@@ -1,4 +1,5 @@
 import argparse
+from datetime import timedelta
 import asyncio
 from typing import AsyncIterable
 
@@ -9,6 +10,7 @@ from yapapi.strategy import MarketStrategy, SCORE_TRUSTED, SCORE_REJECTED
 
 INPUT_FILE = "/golem/tmp/simulation_config.json"
 OUTPUT_FILE = "/golem/tmp/output.h5"
+TASK_TIMEOUT = timedelta(hours=2)
 
 class CustomProviderStrategy(MarketStrategy):
     def __init__(self, trusted_providers):
@@ -52,12 +54,12 @@ async def main():
         strategy = CustomProviderStrategy(providers)
 
         async with Golem(budget=1.0, subnet_tag="public", strategy=strategy) as golem:
-            async for completed in golem.execute_tasks(worker, tasks, payload=package):
+            async for completed in golem.execute_tasks(worker, tasks, payload=package, timeout=TASK_TIMEOUT):
                 print(completed.result.stdout)
     else:
         print("No providers whitelisted. Using any provider...")
         async with Golem(budget=1.0, subnet_tag="public") as golem:
-            async for completed in golem.execute_tasks(worker, tasks, payload=package):
+            async for completed in golem.execute_tasks(worker, tasks, payload=package, timeout=TASK_TIMEOUT):
                 print(completed.result.stdout)
 
 if __name__ == "__main__":
