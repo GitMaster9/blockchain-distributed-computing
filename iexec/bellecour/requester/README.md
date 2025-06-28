@@ -104,12 +104,12 @@ iexec task show [taskID]
 iexec task show 0xf887f21cb2b387f72c9cc3fc0871e8ea902383cc9ac2dc708ab4b9fdfba76295
 ```
 
-You can download the task output
+You can download the task output files with your wallet
 
 ```bash
-iexec task show [taskID] --download
+iexec task show [taskID] --wallet-file [walletName] --keystoredir ./ --download
 ```
 
 ```bash
-iexec task show 0xf887f21cb2b387f72c9cc3fc0871e8ea902383cc9ac2dc708ab4b9fdfba76295 --download
+iexec task show 0xf887f21cb2b387f72c9cc3fc0871e8ea902383cc9ac2dc708ab4b9fdfba76295 --wallet-file "requester_wallet.json" --keystoredir ./ --download
 ```
