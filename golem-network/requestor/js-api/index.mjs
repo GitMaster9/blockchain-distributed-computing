@@ -29,7 +29,7 @@ const whitelistProviders = options.whitelistProviders
     api: { key: "try_golem" },
     demand: {
       workload: {
-        imageHash: "9e7947d1cfed03da910cd80941f3c704c86be35b552527da6e294e43",
+        imageHash: "ed4668e5310aa40ef954637ced7fdb9755e25404a2606a8417c1812a",
       },
     },
     market: {
