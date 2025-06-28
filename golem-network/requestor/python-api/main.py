@@ -38,7 +38,7 @@ async def worker(context: WorkContext, tasks: AsyncIterable[Task]):
 
 async def main():
     package = await vm.repo(
-        image_hash="9e7947d1cfed03da910cd80941f3c704c86be35b552527da6e294e43",
+        image_hash="aa05b7d19cd6adbb5e7197b40df82b9aae012eefc3557a83792a8138",
     )
 
     tasks = [Task(data=None)]
