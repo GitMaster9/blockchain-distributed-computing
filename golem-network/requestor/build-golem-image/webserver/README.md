@@ -7,9 +7,14 @@ To install the needed Python packages run:
 pip install -r requirements.txt
 ```
 
-Go to the ``app`` directory and run:
+Go to the ``app`` directory and run it as a Django development server:
 ```bash
 python manage.py runserver
+```
+
+You can also run it as a uvicorn server:
+```bash
+uvicorn myproject.asgi:application --host 0.0.0.0 --port 8000
 ```
 
 ### References
