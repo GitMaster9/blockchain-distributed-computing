@@ -85,7 +85,7 @@ class Simulation:
         self.absorbed_fraction = self.absorbed_count / self.num_photons
         self.escaped_fraction = escaped_count / self.num_photons
 
-    def save_to_buffer(self):
+    def save_to_buffer(self, skip_absorbed_positions = False):
         buffer = io.BytesIO()
         
         with h5py.File(buffer, 'w') as f:
@@ -97,7 +97,6 @@ class Simulation:
             f.attrs["p_scatter_reverses_direction"] = self.p_scatter_reverses_direction
             f.attrs["seed"] = self.seed
 
-            f.create_dataset("absorbed_positions", data=self.absorbed_positions, compression="gzip")
             f.attrs["absorbed_count"] = self.absorbed_count
             f.attrs["absorbed_fraction"] = self.absorbed_fraction
             
@@ -105,11 +104,16 @@ class Simulation:
             f.attrs["escaped_fraction"] = self.escaped_fraction
 
             f.attrs["time_needed"] = self.time_needed
+
+            if skip_absorbed_positions:
+                f.create_dataset("absorbed_positions", data=[], compression="gzip")
+            else:
+                f.create_dataset("absorbed_positions", data=self.absorbed_positions, compression="gzip")
         
         buffer.seek(0)
         return buffer.getvalue()
 
-    def save_to_file(self, file_name: str):
+    def save_to_file(self, file_name: str, skip_absorbed_positions = False):
         file_path = f"{file_name}.h5"
         with h5py.File(file_path, "w") as f:
             f.attrs["num_photons"] = self.num_photons
@@ -120,7 +124,6 @@ class Simulation:
             f.attrs["p_scatter_reverses_direction"] = self.p_scatter_reverses_direction
             f.attrs["seed"] = self.seed
 
-            f.create_dataset("absorbed_positions", data=self.absorbed_positions, compression="gzip")
             f.attrs["absorbed_count"] = self.absorbed_count
             f.attrs["absorbed_fraction"] = self.absorbed_fraction
             
@@ -128,6 +131,11 @@ class Simulation:
             f.attrs["escaped_fraction"] = self.escaped_fraction
 
             f.attrs["time_needed"] = self.time_needed
+
+            if skip_absorbed_positions:
+                f.create_dataset("absorbed_positions", data=[], compression="gzip")
+            else:
+                f.create_dataset("absorbed_positions", data=self.absorbed_positions, compression="gzip")
 
     def load_from_file(self, file_name: str):
         try:

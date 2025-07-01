@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Task State Server</title>
+    <title>Radiation transport</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -33,7 +33,7 @@
     </style>
 </head>
 <body>
-    <h1>Task State Server</h1>
+    <h1>Photon radiation transport simulation - Monte Carlo</h1>
     
     <div class="state" id="state-display">
         Current State: <span id="current-state">{{ state }}</span>
@@ -42,6 +42,42 @@
     <button id="start-btn" class="start-btn" onclick="startTask()">Start Task</button>
     <button id="reset-btn" class="reset-btn" onclick="resetTask()">Reset</button>
     <button id="download-btn" class="download-btn" onclick="downloadOutput()">Download Output</button>
+
+    <div class="parameters">
+        <h3>Parameters</h3>
+        <div class="param-group">
+            <label for="num_photons">num_photons:</label>
+            <input type="number" id="num_photons" step="100000" min="1" max="1000000000" value="1000000" />
+        </div>
+        <div class="param-group">
+            <label for="slab_thickness">slab_thickness:</label>
+            <input type="number" id="slab_thickness" step="0.1" min="0.1" max="100.0" value="10.0" />
+        </div>
+        <div class="param-group">
+            <label for="attenuation_coeff">attenuation_coeff:</label>
+            <input type="number" id="attenuation_coeff" step="0.01" min="0.01" max="1.0" value="0.1" />
+        </div>
+        <div class="param-group">
+            <label for="use_scatter">use_scatter:</label>
+            <input type="checkbox" id="use_scatter" />
+        </div>
+        <div class="param-group">
+            <label for="p_scatter">p_scatter:</label>
+            <input type="number" id="p_scatter" step="0.01" min="0.0" max="1.0" value="0.7" />
+        </div>
+        <div class="param-group">
+            <label for="p_scatter_reverses_direction">p_scatter_reverses_direction:</label>
+            <input type="number" id="p_scatter_reverses_direction" step="0.01" min="0.0" max="1.0" value="0.5" />
+        </div>
+        <div class="param-group">
+            <label for="seed">seed:</label>
+            <input type="number" id="seed" step="1" min="1" max="1000" value="1" />
+        </div>
+        <div class="param-group">
+            <label for="skip_full_result_file">skip_full_result_file:</label>
+            <input type="checkbox" id="skip_full_result_file" />
+        </div>
+    </div>
     
     <script>
         function updateStateDisplay(state) {
@@ -72,11 +108,33 @@
         }
         
         function startTask() {
+
+            const num_photons = parseInt(document.getElementById('num_photons').value);
+            const slab_thickness = parseFloat(document.getElementById('slab_thickness').value);
+            const attenuation_coeff = parseFloat(document.getElementById('attenuation_coeff').value);
+
+            const use_scatter = document.getElementById('use_scatter').checked;
+            const p_scatter = parseFloat(document.getElementById('p_scatter').value);
+            const p_scatter_reverses_direction = parseFloat(document.getElementById('p_scatter_reverses_direction').value);
+
+            const seed = parseInt(document.getElementById('seed').value);
+            const skip_full_result_file = document.getElementById('skip_full_result_file').checked;
+
             fetch('/api/start/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                }
+                },
+                body: JSON.stringify({
+                    num_photons: num_photons,
+                    slab_thickness: slab_thickness,
+                    attenuation_coeff: attenuation_coeff,
+                    use_scatter: use_scatter,
+                    p_scatter: p_scatter,
+                    p_scatter_reverses_direction: p_scatter_reverses_direction,
+                    seed: seed,
+                    skip_full_result_file: skip_full_result_file
+                })
             })
             .then(response => response.json())
             .then(data => {
