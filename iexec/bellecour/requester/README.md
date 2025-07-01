@@ -50,7 +50,7 @@ iexec app publish [appAddress] --wallet-file [walletName] --keystoredir ./
 ```
 
 ```bash
-iexec app publish 0x28Ce45adEC5303ED0f6100375A7bA9049eC937b8 --wallet-file "requester_wallet.json" --keystoredir ./
+iexec app publish 0x06c35255c455d56f97D481666263069cf064eE22 --wallet-file "requester_wallet.json" --keystoredir ./
 ```
 
 You can check the published apporders
@@ -60,16 +60,16 @@ iexec orderbook app [appAddress]
 ```
 
 ```bash
-iexec orderbook app 0x28Ce45adEC5303ED0f6100375A7bA9049eC937b8
+iexec orderbook app 0x06c35255c455d56f97D481666263069cf064eE22
 ```
 
-8. Run the app on the specified workerpool you created
+8. Run the app on the specified workerpool you created with no parameters (default values will be used):
 ```bash
 iexec app run [appAddress] --workerpool [workerpoolAddress] --wallet-file [walletName] --keystoredir ./
 ```
 
 ```bash
-iexec app run 0x28Ce45adEC5303ED0f6100375A7bA9049eC937b8 --workerpool 0x767eb830fd670d221C761b0c144a33Ec39a5902E --wallet-file "requester_wallet.json" --keystoredir ./
+iexec app run 0x06c35255c455d56f97D481666263069cf064eE22 --workerpool 0x767eb830fd670d221C761b0c144a33Ec39a5902E --wallet-file "requester_wallet.json" --keystoredir ./
 ```
 
 You can use a string argument to use for task output.
@@ -79,7 +79,12 @@ iexec app run [appAddress] --workerpool [workerpoolAddress] --wallet-file [walle
 ```
 
 ```bash
-iexec app run 0x28Ce45adEC5303ED0f6100375A7bA9049eC937b8 --workerpool 0x767eb830fd670d221C761b0c144a33Ec39a5902E --wallet-file "requester_wallet.json" --keystoredir ./ --args MyArgument
+iexec app run 0x06c35255c455d56f97D481666263069cf064eE22 --workerpool 0x767eb830fd670d221C761b0c144a33Ec39a5902E --wallet-file "requester_wallet.json" --keystoredir ./ --args MyArgument
+```
+
+You can send simulation parameters to the Python script. Example:
+```bash
+iexec app run 0x06c35255c455d56f97D481666263069cf064eE22 --wallet-file "requester_wallet.json" --keystoredir ./ --args "--num_photons 1_000_000 --skip_full_result_save true"
 ```
 
 This will create a deal with a generated ID (dealid).
