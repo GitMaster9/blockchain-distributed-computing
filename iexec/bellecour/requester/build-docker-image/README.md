@@ -15,7 +15,7 @@ docker build -t your-docker-username/iexec-image-name:1.0 .
 
 Example:
 ```bash
-docker build -t sheyoindustries/iexec-requestor:1.0 .
+docker build -t sheyoindustries/iexec-requester:1.0 .
 ```
 
 3. Push the Docker image to Docker Hub.
