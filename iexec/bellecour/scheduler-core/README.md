@@ -138,3 +138,12 @@ http://$PROD_CORE_HOST/metrics
 ```
 http://$PROD_CORE_HOST/actuator/health
 ```
+
+### Task timeout
+By default, maximum task compute time period is 300 seconds (5 minutes). If a Docker container (task) takes longer than that, the task will never finish and will hang until the task deadline (50 minutes). To change that, you have to set the workerpool task category. Default value is 0 (300) and the possible values are 0-5.
+
+16. Set the category index to 2 (3600 seconds = 60 minutes) with 20 set as the volume (number of tasks that can be executed on this workerpool order - default value is 1). You can have multiple workerpoolorders (e.g. category 0 and category 1, etc.). Example:
+
+```bash
+iexec workerpool publish 0xb146c478acf118bE2Bd1524bb8E9A73ddbc20D40 --category 2 --volume 20 --wallet-file "core_wallet.json" --keystoredir ./
+```
