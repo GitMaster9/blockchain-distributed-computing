@@ -9,7 +9,7 @@
                 "payloads": [
                     {
                         "golem_workers.payloads.ClusterNodePayload": {
-                            "image_hash": "c26ea25703bc654001d437ef9481d0e8ac52d245353a02e812280bd0"
+                            "image_hash": "88ba34f26858881f08f937c6bf21bbe14e676bbf54f952b272ccb526"
                         }
                     }
                 ]
