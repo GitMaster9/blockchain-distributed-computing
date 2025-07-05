@@ -267,7 +267,7 @@ services:
 
   ipfs:
     container_name: ipfs
-    image: ipfs/go-ipfs:master-2025-06-27-a0632aa
+    image: ipfs/go-ipfs:latest
     ports:
       - 4001:4001
       - 5001:5001
