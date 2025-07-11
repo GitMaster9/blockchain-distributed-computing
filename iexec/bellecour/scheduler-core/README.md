@@ -60,15 +60,12 @@ You may now check the workerpool metadata by typing your workerpool address into
 
 10. Register an ENS and setup both ENS resolution and reverse resolution to your workerpool's deployment address
 ```bash
-ENS_WP_SUBDOMAIN="riteh-workerpool"
+iexec ens register [workerpool-domain] --for [workerpool-address] --wallet-file core_wallet.json --keystoredir ./
 ```
 
+Example:
 ```bash
-WP_ADDR="$(jq -r ".workerpool | first(.[])" deployed.json )"
-```
-
-```bash
-iexec ens register "$ENS_WP_SUBDOMAIN" --for "$WP_ADDR" --wallet-file core_wallet.json --keystoredir ./
+iexec ens register riteh-workerpool --for 0xb146c478acf118bE2Bd1524bb8E9A73ddbc20D40 --wallet-file core_wallet.json --keystoredir ./
 ```
 
 Check the workerpool settings (ENS name):
@@ -76,22 +73,15 @@ Check the workerpool settings (ENS name):
 iexec workerpool show --raw | jq
 ```
 
-11. [OPTIONAL] Set your workerpool's API URL. Set the PROD_CORE_HOST_DOMAIN
+11. [OPTIONAL] Set your workerpool's API URL.
 
 ```bash
-PROD_CORE_HOST_DOMAIN=core-prod.v8-bellecour.yourdomain
+iexec workerpool set-api-url [public-domain] [workerpool-address] --wallet-file core_wallet.json --keystoredir ./
 ```
 
+Example:
 ```bash
-CORE_URL="https://$(grep 'PROD_CORE_HOST_DOMAIN=' .env | sed -e 's/PROD_CORE_HOST_DOMAIN=//')"
-```
-
-```bash
-WP_ADDR="$(jq -r ".workerpool | first(.[])" deployed.json )"
-```
-
-```bash
-iexec workerpool set-api-url "$CORE_URL" "$WP_ADDR" --wallet-file core_wallet.json --keystoredir ./
+iexec workerpool set-api-url https://core-prod.v8-bellecour.yourdomain 0xb146c478acf118bE2Bd1524bb8E9A73ddbc20D40 --wallet-file core_wallet.json --keystoredir ./
 ```
 
 Check the workerpool settings (ENS name and API URL):
