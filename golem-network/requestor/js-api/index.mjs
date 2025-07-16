@@ -52,7 +52,7 @@ const whitelistProviders = options.whitelistProviders
         await exe
           .beginBatch()
           .uploadFile("./simulation_config.json", INPUT_FILE)
-          .run(`python /golem/main.py ${INPUT_FILE}`)
+          .run(`python /golem/main.py --config_file ${INPUT_FILE}`)
           .downloadFile(OUTPUT_FILE, "./output.h5")
           .end()
       );
