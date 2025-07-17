@@ -1,5 +1,6 @@
 import argparse
 from datetime import timedelta
+import time
 import asyncio
 from typing import AsyncIterable
 
@@ -63,8 +64,14 @@ async def main():
                 print(completed.result.stdout)
 
 if __name__ == "__main__":
+    start_time = time.perf_counter()
+
     enable_default_logger(log_file="requestor.log")
 
     loop = asyncio.get_event_loop()
     task = loop.create_task(main())
     loop.run_until_complete(task)
+
+    end_time = time.perf_counter()
+    time_needed = round(end_time - start_time, 2)
+    print(f"Time needed: {time_needed} s")
