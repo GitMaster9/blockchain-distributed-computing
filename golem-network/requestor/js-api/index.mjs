@@ -6,7 +6,7 @@ import { OfferProposalFilterFactory } from "@golem-sdk/golem-js";
 const INPUT_FILE = "/golem/tmp/simulation_config.json";
 const OUTPUT_FILE = "/golem/tmp/output.h5";
 
-const DEFAULT_PROVIDERS_WHITELIST = ["testnet-c1-0", "testnet-c1-1"];
+const DEFAULT_PROVIDERS_WHITELIST = ["riteh-benchmark-1"];
 
 const program = new Command();
 
@@ -46,6 +46,8 @@ const whitelistProviders = options.whitelistProviders
     }
   });
 
+  const start_time = performance.now();
+
   try {
     const result = await executor.run(async (exe) => {
       return (
@@ -56,6 +58,8 @@ const whitelistProviders = options.whitelistProviders
           .downloadFile(OUTPUT_FILE, "./output.h5")
           .end()
       );
+    }, {
+      timeout: 3600000 // 60 minutes in milliseconds
     });
 
     console.log(result[1]?.stdout);
@@ -63,5 +67,9 @@ const whitelistProviders = options.whitelistProviders
     console.error("Computation failed:", error);
   } finally {
     await executor.shutdown();
+
+    const end_time = performance.now();
+    const timeNeeded = (end_time - start_time) / 1000;
+    console.log(`Time needed: ${timeNeeded.toFixed(2)} s`);
   }
 })();
